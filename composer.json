@@ -1,0 +1,14 @@
+{
+    "name": "rajanvijayan/ecab-vendasta",
+    "description": "A plugin to manage cab schedules for employees.",
+    "type": "wordpress-plugin",
+    "require": {
+      "php": ">=7.2"
+    },
+    "autoload": {
+      "psr-4": {
+        "EcabVendasta\\": "src/"
+      }
+    }
+  }
+  

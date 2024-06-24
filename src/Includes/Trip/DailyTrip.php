@@ -8,7 +8,7 @@ class DailyTrip {
 
     private function create_daily_trip() {
         // Check if a trip for today already exists
-        $today = date('d M Y');
+        $today = wp_date('d M Y');  
         $args = array(
             'post_type'  => 'trip',
             'post_status' => 'publish',

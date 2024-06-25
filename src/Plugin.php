@@ -8,6 +8,7 @@ use EcabVendasta\Includes\Trip\Trip;
 use EcabVendasta\Includes\Setting\Setting;
 use EcabVendasta\Includes\StaffNotification;
 Use EcabVendasta\Includes\Cron\Cron;
+use EcabVendasta\Includes\Trip\Route;
 
 class Plugin {
     /**
@@ -21,6 +22,7 @@ class Plugin {
         new Trip();
         new Setting();
         new StaffNotification();
-        new Cron();
+        new Cron(); // Daily cron job to create parent trip
+        new Route(); // Create shift based cron job
     }
 }

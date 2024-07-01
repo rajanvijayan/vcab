@@ -1,23 +1,6 @@
-.passenger {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-}
-
-.passenger label {
-    display: block;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.time-entry {
+.vcab-shift {
     border: 1px solid #CCC;
     padding: 10px;
     margin-bottom: 10px;
-    display: inline-block;
-}
-
-.time-entry input[type="time"] {
-    min-width: 140px;
+    display: block;
 }

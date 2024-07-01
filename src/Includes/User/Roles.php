@@ -14,16 +14,6 @@ class Roles {
         );
 
         add_role(
-            'driver',
-            __( 'Driver' ),
-            array(
-                'read'         => true,
-                'edit_posts'   => false,
-                'delete_posts' => false,
-            )
-        );
-
-        add_role(
             'cab_admin',
             __( 'Cab Admin' ),
             array(

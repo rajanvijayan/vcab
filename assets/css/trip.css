@@ -28,3 +28,7 @@
 .time-entry input[type="time"] {
     min-width: 140px;
 }
+
+tr.weekend td {
+    background: #f2d3d3;
+}

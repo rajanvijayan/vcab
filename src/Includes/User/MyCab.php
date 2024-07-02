@@ -36,9 +36,6 @@ class MyCab {
             <?php 
             $user_id = get_current_user_id();
             $cab_bookings = get_user_meta($user_id, 'cab_bookings', true);
-            // echo '<pre>';
-            // print_r($cab_bookings);
-            // echo '</pre>';
             ?>
                 <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                     <input type="hidden" name="action" value="generate_bookings">
@@ -59,14 +56,21 @@ class MyCab {
                     <?php submit_button('Generate Booking'); ?>
                 </form>
 
-                    
                 <div class="wrap">
+                    <?php 
+                    $pickup_time = get_user_meta($user_id, 'cab_pickup_time', true);
+                    $drop_time = get_user_meta($user_id, 'cab_drop_time', true);
+                    ?>
                     <table class="wp-list-table widefat striped">
                         <thead>
                             <tr>
-                                <th>Date 1</th>
-                                <th>Pickup</th>
-                                <th>Drop Off</th>
+                                <th>Date</th>
+                                <?php if ($pickup_time != "") : ?>
+                                    <th>Pickup</th>
+                                <?php endif; ?>
+                                <?php if ($drop_time != "") : ?>
+                                    <th>Drop Off</th>
+                                <?php endif; ?>
                                 <!-- <th>Location</th> -->
                                 <th>Status</th>
                             </tr>
@@ -75,15 +79,23 @@ class MyCab {
                             <?php 
                             $user_id = get_current_user_id();
                             $cab_bookings = get_user_meta($user_id, 'cab_bookings', true);
+                            if (!is_array($cab_bookings)) {
+                                $cab_bookings = [];
+                            }
                             foreach ($cab_bookings as $date => $booking) : ?>
-                                <tr>
-                                    <td><?php echo date('d M Y', $date); ?></td>
+                                <tr class="<?php echo (date('N', $date) >= 6) ? 'weekend' : ''; ?>">
+                                    <td><?php echo date('d M Y l', $date); ?></td>
+
+                                    <?php if ($pickup_time != "") : ?>
                                     <td>
                                         <input type="checkbox" class="pickup-toggle" <?php echo @$booking['pick_up'] == 1 ? 'checked' : ''; ?> >
                                     </td>
+                                    <?php endif; ?>
+                                    <?php if ($drop_time != "") : ?>
                                     <td>
                                         <input type="checkbox" class="drop-off-toggle" <?php echo @$booking['drop_off'] == 1 ? 'checked' : ''; ?> >
                                     </td>
+                                    <?php endif; ?>
                                     <!-- <td><?php echo $booking['location']['location_name']; ?></td> -->
                                     <td><?php echo ucfirst($booking['status']); ?></td>
                                 </tr>
@@ -184,9 +196,9 @@ class MyCab {
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    alert('Booking updated successfully.');
+                                    // alert('Booking updated successfully.');
                                 } else {
-                                    alert('Failed to update booking.');
+                                    // alert('Failed to update booking.');
                                 }
                             }
                         });
@@ -273,7 +285,7 @@ class MyCab {
         $drop_time = get_user_meta($user_id, 'cab_drop_time', true);
         $location = get_user_meta($user_id, 'cab_location', true);
 
-        if (!$pickup_time || !$drop_time || !$location) {
+        if ( ( !$pickup_time && !$drop_time ) || !$location) {
             wp_send_json_error(__('Please complete your profile settings first.'));
         }
 
@@ -282,11 +294,19 @@ class MyCab {
         $bookings = [];
 
         $cab_bookings = get_user_meta($user_id, 'cab_bookings', true);
+        if (!is_array($cab_bookings)) {
+            $cab_bookings = [];
+        }
+
+        $bookings = [];
 
         for ($date = $from_date_ts; $date <= $to_date_ts; $date += DAY_IN_SECONDS) {
+            $pick_up = $drop_off = 0;
 
-            $pick_up = @$cab_bookings[$date]['pick_up'] != '' ? @$cab_bookings[$date]['pick_up'] : 0;
-            $drop_off = @$cab_bookings[$date]['drop_off'] != '' ? @$cab_bookings[$date]['drop_off'] : 0;
+            if (isset($cab_bookings[$date])) {
+                $pick_up = !empty($cab_bookings[$date]['pick_up']) ? $cab_bookings[$date]['pick_up'] : 0;
+                $drop_off = !empty($cab_bookings[$date]['drop_off']) ? $cab_bookings[$date]['drop_off'] : 0;
+            }
 
             $bookings[$date] = [
                 'pick_up' => $pick_up,

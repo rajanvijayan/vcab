@@ -6,6 +6,9 @@ use EcabVendasta\Includes\User\Roles;
 use EcabVendasta\Includes\Settings\CabSettings;
 use EcabVendasta\Includes\User\MyCab;
 use EcabVendasta\Includes\Trip\PostType;
+use EcabVendasta\Includes\Trip\Cron;
+
+use EcabVendasta\Includes\Trip\Schedule;
 
 class Plugin {
     /**
@@ -18,5 +21,8 @@ class Plugin {
         new CabSettings();
         new MyCab();
         new PostType();
+        new Cron();
+
+        new Schedule();
     }
 }

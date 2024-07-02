@@ -1,4 +1,4 @@
-<?php
+<?php 
 namespace EcabVendasta\Includes\Settings;
 
 class CabSettings {
@@ -10,7 +10,7 @@ class CabSettings {
     }
 
     public static function enqueue_scripts() {
-        wp_enqueue_style('vcab-style', plugin_dir_url( __FILE__ ) . '../../../assets/css/trip.css');
+        wp_enqueue_style('vcab-style', plugin_dir_url(__FILE__) . '../../../assets/css/trip.css');
     }
 
     public static function add_admin_menu() {
@@ -25,6 +25,7 @@ class CabSettings {
 
     public static function register_settings() {
         register_setting('cab_settings_group', 'vcab_shifts');
+        register_setting('cab_settings_group', 'vcab_cron_time');
 
         add_settings_section(
             'cab_settings_section', 
@@ -38,6 +39,14 @@ class CabSettings {
             'Cab Provided Shifts', 
             [__CLASS__, 'render_shifts_field'], 
             'cab_settings', 
+            'cab_settings_section'
+        );
+
+        add_settings_field(
+            'vcab_cron_time',
+            'Cron Trigger Time',
+            [__CLASS__, 'render_cron_time_field'],
+            'cab_settings',
             'cab_settings_section'
         );
     }
@@ -99,6 +108,13 @@ class CabSettings {
             });
         });
         </script>
+        <?php
+    }
+
+    public static function render_cron_time_field() {
+        $vcab_cron_time = get_option('vcab_cron_time', '');
+        ?>
+        <input type="time" id="vcab_cron_time" name="vcab_cron_time" value="<?php echo esc_attr($vcab_cron_time); ?>" required>
         <?php
     }
 }

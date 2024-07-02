@@ -75,9 +75,9 @@ class MyCab {
                             <?php 
                             $user_id = get_current_user_id();
                             $cab_bookings = get_user_meta($user_id, 'cab_bookings', true);
-                            foreach ($cab_bookings as $booking) : ?>
+                            foreach ($cab_bookings as $date => $booking) : ?>
                                 <tr>
-                                    <td><?php echo date('Y-m-d', $booking['date']); ?></td>
+                                    <td><?php echo date('d M Y', $date); ?></td>
                                     <td>
                                         <input type="checkbox" class="pickup-toggle" <?php echo @$booking['pick_up'] == 1 ? 'checked' : ''; ?> >
                                     </td>
@@ -238,7 +238,7 @@ class MyCab {
         update_user_meta($user_id, 'cab_pickup_time', $pickup_time);
         update_user_meta($user_id, 'cab_drop_time', $drop_time);
 
-        $geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($location) . "&key=YOUR_API_KEY";
+        $geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($location) . "&key=AIzaSyD1n9n2Snap5TvXTP8etyTK3Q3f60qaJqc";
         $geocodeData = file_get_contents($geocodeUrl);
         $locationData = json_decode($geocodeData, true);
 
@@ -283,20 +283,17 @@ class MyCab {
 
         $cab_bookings = get_user_meta($user_id, 'cab_bookings', true);
 
-        $i = 0;
         for ($date = $from_date_ts; $date <= $to_date_ts; $date += DAY_IN_SECONDS) {
 
-            $pickup = strtotime($date) ==  $cab_bookings[$i]['date'] ? $cab_bookings[$i]['pick_up'] : 0;
-            $drop_off = strtotime($date) ==  $cab_bookings[$i]['date'] ? $cab_bookings[$i]['pick_up'] : 0; 
+            $pick_up = @$cab_bookings[$date]['pick_up'] != '' ? @$cab_bookings[$date]['pick_up'] : 0;
+            $drop_off = @$cab_bookings[$date]['drop_off'] != '' ? @$cab_bookings[$date]['drop_off'] : 0;
 
-            $bookings[] = [
-                'date' => $date,
-                'pick_up' => $cab_bookings[$i]['pick_up'],
-                'drop_off' => $cab_bookings[$i]['drop_off'],
+            $bookings[$date] = [
+                'pick_up' => $pick_up,
+                'drop_off' => $drop_off,
                 'location' => $location,
                 'status' => 'future'
             ];
-            $i++;
         }
 
         update_user_meta($user_id, 'cab_bookings', $bookings);
@@ -318,8 +315,9 @@ class MyCab {
         $value = sanitize_text_field($_POST['value']);
         $cab_bookings = get_user_meta($user_id, 'cab_bookings', true);
 
-        foreach ($cab_bookings as &$booking) {
-            if ($booking['date'] == strtotime($date)) {
+
+        foreach ($cab_bookings as $date_key => &$booking) {
+            if ($date_key == strtotime( $date )) {
                 $booking[$field] = $value == 'true' ? 1 : 0;
                 break;
             }

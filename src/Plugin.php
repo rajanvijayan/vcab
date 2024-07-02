@@ -5,6 +5,7 @@ namespace EcabVendasta;
 use EcabVendasta\Includes\User\Roles;
 use EcabVendasta\Includes\Settings\CabSettings;
 use EcabVendasta\Includes\User\MyCab;
+use EcabVendasta\Includes\Trip\PostType;
 
 class Plugin {
     /**
@@ -16,5 +17,6 @@ class Plugin {
         new Roles();
         new CabSettings();
         new MyCab();
+        new PostType();
     }
 }

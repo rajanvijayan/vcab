@@ -49,6 +49,8 @@ class Schedule {
                             // print_r($booking);
                             // echo '</pre>';
 
+                            $staff = [];
+
                             if( ($type == "pickup" && $booking['pick_up'] == 1) || ($type == "drop" && $booking['drop_off'] == 1) ){
                                 $staff = [
                                     'name' => $user->display_name,
@@ -70,24 +72,93 @@ class Schedule {
 
             $prompt = '';
             foreach( $routes[$key]['staffs'] as $staff ) {
+                if( empty($staff) ) {
+                    continue;
+                }
                 $prompt .= $staff['name'].' from '.$staff['location']['location_name']. ', ';
             }
 
-            $prompt .= ' prepare tripsheet to Vendasta India, Chennai, All cabs starts from Ambathur, Chennai. And max capacity of the cab is 3. prepare tripsheet based on location. Output should be in JSON format.';
+            $shift_readable = date('h:i A', strtotime( $vcab_shift['time'] ) );
+
+            $json_skeleton = [
+                'Car A' => [
+                    'starting_point' => '',
+                    'ending_point' => '',
+                    'time' => '',
+                    'staff' => [
+                        [
+                            'name' => '',
+                            'email' => '',
+                            'phone' => '',
+                            'location' => [
+                                'location_name' => '',
+                                'location_address' => '',
+                                'location_lat' => '',
+                                'location_lng' => ''
+                            ]
+                        ],
+                        [
+                            'name' => '',
+                            'email' => '',
+                            'phone' => '',
+                            'location' => [
+                                'location_name' => '',
+                                'location_address' => '',
+                                'location_lat' => '',
+                                'location_lng' => ''
+                            ]
+                        ],
+                    ]
+                ],
+                'Car B' => [
+                    'starting_point' => '',
+                    'ending_point' => '',
+                    'time' => '',
+                    'staff' => [
+                        [
+                            'name' => '',
+                            'email' => '',
+                            'phone' => '',
+                            'location' => [
+                                'location_name' => '',
+                                'location_address' => '',
+                                'location_lat' => '',
+                                'location_lng' => ''
+                            ]
+                        ],
+                        [
+                            'name' => '',
+                            'email' => '',
+                            'phone' => '',
+                            'location' => [
+                                'location_name' => '',
+                                'location_address' => '',
+                                'location_lat' => '',
+                                'location_lng' => ''
+                            ]
+                        ],
+                    ]
+                ],
+            ];
+
+            if( $type == "pickup" ){
+                $prompt .= ' prepare tripsheet to Vendasta India, Chennai, All cars starts from Ambathur, Chennai. Min and Max capacity of the each car is 4. prepare tripsheet based on location. This is required json skeleton for the tripsheet '. json_encode( $json_skeleton );
+            }else if( $type == "drop" ){
+                $prompt .= ' prepare tripsheet from Vendasta India, Chennai to their location, Min and Max capacity of the each car is 4. prepare tripsheet based on location. This is required json skeleton for the tripsheet '. json_encode( $json_skeleton );
+            }
+
+            $prompt = sanitize_text_field($prompt);
+
+            // $ai = new GoogleAI();
+            // $output = $ai->fetchData($prompt);
 
             // echo '<pre>';   
-            // print_r($prompt);
+            // print_r( $prompt );
             // echo '</pre>';
 
         }
 
         
-        // echo '<pre>';   
-        // print_r($routes);
-        // echo '</pre>';
-
-        // $ai = new GoogleAI();
-        // $output = $ai->fetchData($prompt);
 
         // die;
 

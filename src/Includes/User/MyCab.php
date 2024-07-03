@@ -250,7 +250,9 @@ class MyCab {
         update_user_meta($user_id, 'cab_pickup_time', $pickup_time);
         update_user_meta($user_id, 'cab_drop_time', $drop_time);
 
-        $geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($location) . "&key=AIzaSyD1n9n2Snap5TvXTP8etyTK3Q3f60qaJqc";
+        $map_api_key = get_option('vcab_google_maps_api_key');
+
+        $geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($location) . "&key=" . $map_api_key . "&sensor=false";
         $geocodeData = file_get_contents($geocodeUrl);
         $locationData = json_decode($geocodeData, true);
 

@@ -16,15 +16,15 @@ class Schedule {
             return;
         }
 
-        foreach( $vcab_shifts as $vcab_shift ) {
+        foreach( $vcab_shifts as $key => $vcab_shift ) {
 
             $time = $vcab_shift['time'];
             $type = $vcab_shift['type'];
             $tomorrow = strtotime( 'tomorrow' );
 
-            $routes['meta']['date'] = date( 'd M Y', $tomorrow );
-            $routes['meta']['time'] = date( 'h:i A', strtotime( $time ) );
-            $routes['meta']['type'] = $type;            
+            $routes[$key]['meta']['date'] = date( 'd M Y', $tomorrow );
+            $routes[$key]['meta']['time'] = date( 'h:i A', strtotime( $time ) );
+            $routes[$key]['meta']['type'] = $type;            
 
             $arg = [
                 'role' => 'staff',
@@ -59,7 +59,7 @@ class Schedule {
                             }
 
 
-                            $routes['staffs'][] = $staff;
+                            $routes[$key]['staffs'][] = $staff;
 
                         }
                     }
@@ -69,7 +69,7 @@ class Schedule {
 
 
             $prompt = '';
-            foreach( $routes['staffs'] as $staff ) {
+            foreach( $routes[$key]['staffs'] as $staff ) {
                 $prompt .= $staff['name'].' from '.$staff['location']['location_name']. ', ';
             }
 
@@ -81,13 +81,13 @@ class Schedule {
 
         }
 
+        
+        // echo '<pre>';   
+        // print_r($routes);
+        // echo '</pre>';
+
         // $ai = new GoogleAI();
         // $output = $ai->fetchData($prompt);
-
-        
-
-        
-        
 
         // die;
 

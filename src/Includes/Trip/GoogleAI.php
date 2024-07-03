@@ -4,7 +4,7 @@ namespace EcabVendasta\Includes\Trip;
 class GoogleAI{
 
     public static function fetchData($prompt) {
-        $api_key = 'AIzaSyC0grgeIN0r2CJSoojhDeorjgVJYckfiwc'; //get_option('automemoirs_api_secret');
+        $api_key = get_option('vcab_google_ai_studio_key');
         
         $prompt = sanitize_text_field($prompt);
         $api_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$api_key";

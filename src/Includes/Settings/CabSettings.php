@@ -26,6 +26,8 @@ class CabSettings {
     public static function register_settings() {
         register_setting('cab_settings_group', 'vcab_shifts');
         register_setting('cab_settings_group', 'vcab_cron_time');
+        register_setting('cab_settings_group', 'vcab_google_maps_api_key');
+        register_setting('cab_settings_group', 'vcab_google_ai_studio_key');
 
         add_settings_section(
             'cab_settings_section', 
@@ -46,6 +48,22 @@ class CabSettings {
             'vcab_cron_time',
             'Cron Trigger Time',
             [__CLASS__, 'render_cron_time_field'],
+            'cab_settings',
+            'cab_settings_section'
+        );
+
+        add_settings_field(
+            'vcab_google_maps_api_key',
+            'Google Maps API Key',
+            [__CLASS__, 'render_google_maps_api_key_field'],
+            'cab_settings',
+            'cab_settings_section'
+        );
+
+        add_settings_field(
+            'vcab_google_ai_studio_key',
+            'Google AI Studio Key',
+            [__CLASS__, 'render_google_ai_studio_key_field'],
             'cab_settings',
             'cab_settings_section'
         );
@@ -115,6 +133,20 @@ class CabSettings {
         $vcab_cron_time = get_option('vcab_cron_time', '');
         ?>
         <input type="time" id="vcab_cron_time" name="vcab_cron_time" value="<?php echo esc_attr($vcab_cron_time); ?>" required>
+        <?php
+    }
+
+    public static function render_google_maps_api_key_field() {
+        $vcab_google_maps_api_key = get_option('vcab_google_maps_api_key', '');
+        ?>
+        <input type="text" id="vcab_google_maps_api_key" name="vcab_google_maps_api_key" class="regular-text" value="<?php echo esc_attr($vcab_google_maps_api_key); ?>" required>
+        <?php
+    }
+
+    public static function render_google_ai_studio_key_field() {
+        $vcab_google_ai_studio_key = get_option('vcab_google_ai_studio_key', '');
+        ?>
+        <input type="text" id="vcab_google_ai_studio_key" name="vcab_google_ai_studio_key" class="regular-text" value="<?php echo esc_attr($vcab_google_ai_studio_key); ?>" required>
         <?php
     }
 }

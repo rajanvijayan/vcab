@@ -1,6 +1,8 @@
 <?php 
 namespace EcabVendasta\Includes\Trip;
 
+use EcabVendasta\Includes\Trip\Schedule;
+
 class Cron {
 
     public function __construct() {
@@ -24,7 +26,7 @@ class Cron {
     }
 
     public static function run_trip_schedule() {
-        require_once plugin_dir_path(__FILE__) . 'Schedule.php';
+        //require_once plugin_dir_path(__FILE__) . 'Schedule.php';
         $schedule = new Schedule();
         $schedule->schedule_trips();
     }

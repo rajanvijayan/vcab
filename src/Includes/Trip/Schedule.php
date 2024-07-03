@@ -1,6 +1,8 @@
 <?php 
 namespace EcabVendasta\Includes\Trip;
 
+use EcabVendasta\Includes\Trip\GoogleAI;
+
 class Schedule {
 
     public function __construct() {
@@ -14,21 +16,21 @@ class Schedule {
             return;
         }
 
-        foreach( $vcab_shifts as $key => $vcab_shift ) {
+        foreach( $vcab_shifts as $vcab_shift ) {
 
-            $shift_peoples[$key] = [];
-
+            $time = $vcab_shift['time'];
+            $type = $vcab_shift['type'];
             $tomorrow = strtotime( 'tomorrow' );
+
+            $routes['meta']['date'] = date( 'd M Y', $tomorrow );
+            $routes['meta']['time'] = date( 'h:i A', strtotime( $time ) );
+            $routes['meta']['type'] = $type;            
 
             $arg = [
                 'role' => 'staff',
                 'meta_key' => 'cab_'.$vcab_shift['type'].'_time',
                 'meta_value' => $vcab_shift['time'],
             ];
-
-            // echo '<pre>';
-            // print_r($arg);
-            // echo '</pre>';
 
             $users = get_users( $arg );
 
@@ -42,24 +44,49 @@ class Schedule {
                 if( isset($cab_bookings) && is_array($cab_bookings) ) {                    
                     foreach ($cab_bookings as $timestamp => $booking) {
                         if ($timestamp >= $now && $timestamp < $tomorrow) {
-                            $shift_peoples[$key][] = $user->ID;
 
-                            // echo '<pre>';   
-                            // print_r($cab_bookings);
+                            // echo '<pre>';
+                            // print_r($booking);
                             // echo '</pre>';
+
+                            if( ($type == "pickup" && $booking['pick_up'] == 1) || ($type == "drop" && $booking['drop_off'] == 1) ){
+                                $staff = [
+                                    'name' => $user->display_name,
+                                    'email' => $user->user_email,
+                                    'phone' => get_user_meta($user->ID, 'phone', true),
+                                    'location' => get_user_meta($user->ID, 'cab_location', true),
+                                ];
+                            }
+
+
+                            $routes['staffs'][] = $staff;
 
                         }
                     }
                 }
 
             }
-     
+
+
+            $prompt = '';
+            foreach( $routes['staffs'] as $staff ) {
+                $prompt .= $staff['name'].' from '.$staff['location']['location_name']. ', ';
+            }
+
+            $prompt .= ' prepare tripsheet to Vendasta India, Chennai, All cabs starts from Ambathur, Chennai. And max capacity of the cab is 3. prepare tripsheet based on location. Output should be in JSON format.';
+
+            // echo '<pre>';   
+            // print_r($prompt);
+            // echo '</pre>';
+
         }
 
-        // echo '<pre>';   
-        // print_r($shift_peoples);
-        // echo '</pre>';
+        // $ai = new GoogleAI();
+        // $output = $ai->fetchData($prompt);
 
+        
+
+        
         
 
         // die;

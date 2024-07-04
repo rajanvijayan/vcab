@@ -63,6 +63,7 @@ class PostType {
 
         $trip_schedule = get_post_meta($post->ID, 'trip_schedule', true);
         $driver = get_post_meta($post->ID, 'driver', true);
+        $driver_phone = get_post_meta($post->ID, 'driver_phone', true);
         $cab_reg_no = get_post_meta($post->ID, 'cab_reg_no', true);
         $passenger_list = get_post_meta($post->ID, 'passenger_list', true);
         $trip_status = get_post_meta($post->ID, 'trip_status', true);
@@ -86,17 +87,12 @@ class PostType {
                 </td>
             </tr>
             <tr>
-                <th><label for="driver"><?php _e('Driver', 'textdomain'); ?></label></th>
-                <td>
-                    <select name="driver" id="driver" class="regular-text">
-                        <?php
-                        $users = get_users(['role' => 'driver']);
-                        foreach ($users as $user) {
-                            echo '<option value="' . esc_attr($user->ID) . '" ' . selected($driver, $user->ID, false) . '>' . esc_html($user->display_name) . '</option>';
-                        }
-                        ?>
-                    </select>
-                </td>
+                <th><label for="driver"><?php _e('Driver Name', 'textdomain'); ?></label></th>
+                <td><input type="text" name="driver" id="driver" value="<?php echo esc_attr($driver); ?>" class="regular-text"></td>
+            </tr>
+            <tr>
+                <th><label for="driver_phone"><?php _e('Driver Phone', 'textdomain'); ?></label></th>
+                <td><input type="text" name="driver_phone" id="driver_phone" value="<?php echo esc_attr($driver_phone); ?>" class="regular-text"></td>
             </tr>
             <tr>
                 <th><label for="cab_reg_no"><?php _e('Cab Reg No', 'textdomain'); ?></label></th>
@@ -111,20 +107,20 @@ class PostType {
                                 <label for="passenger_name_<?php echo $index; ?>"><?php _e('Name', 'textdomain'); ?></label>
                                 <input type="text" id="passenger_name_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][name]" placeholder="<?php _e('Name', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['name']); ?>" class="regular-text">
 
-                                <label for="shift_time_<?php echo $index; ?>"><?php _e('Shift Time', 'textdomain'); ?></label>
-                                <input type="time" id="shift_time_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][shift_time]" placeholder="<?php _e('Shift Time', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['shift_time']); ?>" class="regular-text">
+                                <!-- <label for="shift_time_<?php echo $index; ?>"><?php _e('Shift Time', 'textdomain'); ?></label>
+                                <input type="time" id="shift_time_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][shift_time]" placeholder="<?php _e('Shift Time', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['shift_time']); ?>" class="regular-text"> -->
 
                                 <label for="location_<?php echo $index; ?>"><?php _e('Location', 'textdomain'); ?></label>
                                 <input type="text" id="location_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][location]" placeholder="<?php _e('Location', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['location']); ?>" class="regular-text">
 
-                                <label for="start_time_<?php echo $index; ?>"><?php _e('Start Time', 'textdomain'); ?></label>
+                                <!-- <label for="start_time_<?php echo $index; ?>"><?php _e('Start Time', 'textdomain'); ?></label>
                                 <input type="time" id="start_time_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][start_time]" placeholder="<?php _e('Start Time', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['start_time']); ?>" class="regular-text">
 
                                 <label for="end_time_<?php echo $index; ?>"><?php _e('Start Time', 'textdomain'); ?></label>
                                 <input type="time" id="end_time_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][end_time]" placeholder="<?php _e('Start Time', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['end_time']); ?>" class="regular-text">
 
                                 <label for="rating_<?php echo $index; ?>"><?php _e('Rating', 'textdomain'); ?></label>
-                                <input type="number" id="rating_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][rating]" placeholder="<?php _e('Rating', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['rating']); ?>" min="1" max="5" class="regular-text">
+                                <input type="number" id="rating_<?php echo $index; ?>" name="passenger_list[<?php echo $index; ?>][rating]" placeholder="<?php _e('Rating', 'textdomain'); ?>" value="<?php echo esc_attr($passenger['rating']); ?>" min="1" max="5" class="regular-text"> -->
                             </div>
 
                         <?php endforeach; ?>
@@ -146,7 +142,7 @@ class PostType {
                     </select>
                 </td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <th><label for="start_time"><?php _e('Start Time', 'textdomain'); ?></label></th>
                 <td><input type="time" name="start_time" id="start_time" value="<?php echo esc_attr($start_time); ?>" class="regular-text"></td>
             </tr>
@@ -161,7 +157,7 @@ class PostType {
             <tr>
                 <th><label for="driver_notes"><?php _e('Driver Notes', 'textdomain'); ?></label></th>
                 <td><textarea name="driver_notes" id="driver_notes" class="regular-text"><?php echo esc_textarea($driver_notes); ?></textarea></td>
-            </tr>
+            </tr> -->
             <tr>
                 <th><label for="admin_notes"><?php _e('Admin Notes', 'textdomain'); ?></label></th>
                 <td><textarea name="admin_notes" id="admin_notes" class="regular-text"><?php echo esc_textarea($admin_notes); ?></textarea></td>
@@ -178,20 +174,20 @@ class PostType {
                     <label for="passenger_name_${index}"><?php _e('Name', 'textdomain'); ?></label>
                     <input type="text" id="passenger_name_${index}" name="passenger_list[${index}][name]" placeholder="<?php _e('Name', 'textdomain'); ?>" class="regular-text">
 
-                    <label for="shift_time_${index}"><?php _e('Shift Time', 'textdomain'); ?></label>
-                    <input type="time" id="shift_time_${index}" name="passenger_list[${index}][shift_time]" placeholder="<?php _e('Shift Time', 'textdomain'); ?>" class="regular-text">
+                    <!-- <label for="shift_time_${index}"><?php _e('Shift Time', 'textdomain'); ?></label>
+                    <input type="time" id="shift_time_${index}" name="passenger_list[${index}][shift_time]" placeholder="<?php _e('Shift Time', 'textdomain'); ?>" class="regular-text"> -->
                     
                     <label for="location_${index}"><?php _e('Location', 'textdomain'); ?></label>
                     <input type="text" id="location_${index}" name="passenger_list[${index}][location]" placeholder="<?php _e('Location', 'textdomain'); ?>" class="regular-text">
 
-                    <label for="start_time_${index}"><?php _e('Start Time', 'textdomain'); ?></label>
+                    <!-- <label for="start_time_${index}"><?php _e('Start Time', 'textdomain'); ?></label>
                     <input type="time" id="start_time_${index}" name="passenger_list[${index}][start_time]" placeholder="<?php _e('Start Time', 'textdomain'); ?>" class="regular-text">
 
-                    <label for="end_time_${index}"><?php _e('Start Time', 'textdomain'); ?></label>
+                    <label for="end_time_${index}"><?php _e('End Time', 'textdomain'); ?></label>
                     <input type="time" id="end_time_${index}" name="passenger_list[${index}][end_time]" placeholder="<?php _e('Start Time', 'textdomain'); ?>" class="regular-text">
 
                     <label for="rating_${index}"><?php _e('Rating', 'textdomain'); ?></label>
-                    <input type="number" id="rating_${index}" name="passenger_list[${index}][rating]" placeholder="<?php _e('Rating', 'textdomain'); ?>" min="1" max="5" class="regular-text">
+                    <input type="number" id="rating_${index}" name="passenger_list[${index}][rating]" placeholder="<?php _e('Rating', 'textdomain'); ?>" min="1" max="5" class="regular-text"> -->
                 `;
                 container.appendChild(passenger);
             });

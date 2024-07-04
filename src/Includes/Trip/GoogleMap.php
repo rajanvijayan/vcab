@@ -3,16 +3,12 @@ namespace EcabVendasta\Includes\Trip;
 
 class GoogleMap {
 
-    private $api_key;
-
-    public function __construct($api_key) {
-        $this->api_key = $api_key;
-    }
-
     public function calculateDistance($origin, $destination) {
+        $api_key = get_option('vcab_google_maps_api_key', '');
+
         $origin = urlencode($origin);
         $destination = urlencode($destination);
-        $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origin}&destinations={$destination}&key={$this->api_key}&mode=driving";
+        $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={$origin}&destinations={$destination}&key={$api_key}&mode=driving";
 
         $response = file_get_contents($url);
         $json = json_decode($response, true);
@@ -25,6 +21,7 @@ class GoogleMap {
     }
 
     public function groupStaffByLocation($staff) {
+
         $groupedStaff = array();
         $carIndex = 0;
 
@@ -54,7 +51,6 @@ class GoogleMap {
                 $groupedStaff[] = array(
                     "starting_point" => $startingPoint,
                     "ending_point" => "Vendasta India, Chennai, India",
-                    "time" => "", // Time can be estimated using a Map API later
                     "staff" => array(),
                 );
                 $minCarIndex = count($groupedStaff) - 1; // Index of the newly created car

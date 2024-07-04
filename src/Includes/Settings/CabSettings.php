@@ -60,13 +60,6 @@ class CabSettings {
             'cab_settings_section'
         );
 
-        add_settings_field(
-            'vcab_google_ai_studio_key',
-            'Google AI Studio Key',
-            [__CLASS__, 'render_google_ai_studio_key_field'],
-            'cab_settings',
-            'cab_settings_section'
-        );
     }
 
     public static function create_admin_page() {
@@ -143,10 +136,4 @@ class CabSettings {
         <?php
     }
 
-    public static function render_google_ai_studio_key_field() {
-        $vcab_google_ai_studio_key = get_option('vcab_google_ai_studio_key', '');
-        ?>
-        <input type="text" id="vcab_google_ai_studio_key" name="vcab_google_ai_studio_key" class="regular-text" value="<?php echo esc_attr($vcab_google_ai_studio_key); ?>" required>
-        <?php
-    }
 }

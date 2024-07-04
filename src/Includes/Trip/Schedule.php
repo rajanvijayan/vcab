@@ -1,7 +1,7 @@
 <?php 
 namespace EcabVendasta\Includes\Trip;
 
-use EcabVendasta\Includes\Trip\GoogleAI;
+use EcabVendasta\Includes\Trip\GoogleMap;
 
 class Schedule {
 
@@ -68,99 +68,65 @@ class Schedule {
                 }
 
             }
+        }
 
-
-            $prompt = '';
-            foreach( $routes[$key]['staffs'] as $staff ) {
-                if( empty($staff) ) {
-                    continue;
+        foreach ($routes as $key => $route) {
+            
+            $staff_query = [];
+            foreach( $route['staffs'] as $staff ) {
+                if( !empty($staff) && !empty($staff['location']) ) {
+                    $staff_query[$staff['name']] = ["location" => $staff['location']['location_name']];                    
                 }
-                $prompt .= $staff['name'].' from '.$staff['location']['location_name']. ', ';
             }
 
-            $shift_readable = date('h:i A', strtotime( $vcab_shift['time'] ) );
+            $googleMap = new GoogleMap();
+            $groupedStaff = $googleMap->groupStaffByLocation($staff_query);            
 
-            $json_skeleton = [
-                'Car A' => [
-                    'starting_point' => '',
-                    'ending_point' => '',
-                    'time' => '',
-                    'staff' => [
-                        [
-                            'name' => '',
-                            'email' => '',
-                            'phone' => '',
-                            'location' => [
-                                'location_name' => '',
-                                'location_address' => '',
-                                'location_lat' => '',
-                                'location_lng' => ''
-                            ]
-                        ],
-                        [
-                            'name' => '',
-                            'email' => '',
-                            'phone' => '',
-                            'location' => [
-                                'location_name' => '',
-                                'location_address' => '',
-                                'location_lat' => '',
-                                'location_lng' => ''
-                            ]
-                        ],
-                    ]
-                ],
-                'Car B' => [
-                    'starting_point' => '',
-                    'ending_point' => '',
-                    'time' => '',
-                    'staff' => [
-                        [
-                            'name' => '',
-                            'email' => '',
-                            'phone' => '',
-                            'location' => [
-                                'location_name' => '',
-                                'location_address' => '',
-                                'location_lat' => '',
-                                'location_lng' => ''
-                            ]
-                        ],
-                        [
-                            'name' => '',
-                            'email' => '',
-                            'phone' => '',
-                            'location' => [
-                                'location_name' => '',
-                                'location_address' => '',
-                                'location_lat' => '',
-                                'location_lng' => ''
-                            ]
-                        ],
-                    ]
-                ],
-            ];
+            foreach( $groupedStaff as $key => $trip ){
 
-            if( $type == "pickup" ){
-                $prompt .= ' prepare tripsheet to Vendasta India, Chennai, All cars starts from Ambathur, Chennai. Min and Max capacity of the each car is 4. prepare tripsheet based on location. This is required json skeleton for the tripsheet '. json_encode( $json_skeleton );
-            }else if( $type == "drop" ){
-                $prompt .= ' prepare tripsheet from Vendasta India, Chennai to their location, Min and Max capacity of the each car is 4. prepare tripsheet based on location. This is required json skeleton for the tripsheet '. json_encode( $json_skeleton );
+                $trip_index = $key + 1;
+                $trip_title = "Route $trip_index - " . $route['meta']['date'] . " | " . $route['meta']['time'] . " | " . $route['meta']['type'];
+
+                $trip_data = [
+                    'post_title' => $trip_title,
+                    'post_status' => 'publish',
+                    'post_type' => 'trip',
+                ];
+
+                // echo "<pre>";
+                // print_r($trip_data);
+                // echo "</pre>";
+
+                $trip_id = wp_insert_post($trip_data);
+
+                $passenger_list = [];
+                foreach ($trip['staff'] as $staff) {
+                    $passenger_list[] = [
+                        'name' => $staff['name'],
+                        'shift_time' => $route['meta']['time'],
+                        'location' => $staff['location'],
+                    ];
+                }
+
+                if (!is_wp_error($trip_id)) {
+                    update_post_meta($trip_id, 'trip_schedule', $route['meta']['type']);
+
+                    if (isset($passenger_list) && is_array($passenger_list)) {
+                        $passenger_list = array_map(function($passenger) {
+                            return array_map('sanitize_text_field', $passenger);
+                        }, $passenger_list);
+                        update_post_meta($trip_id, 'passenger_list', $passenger_list);
+                    }
+                }
+                
             }
 
-            $prompt = sanitize_text_field($prompt);
-
-            // $ai = new GoogleAI();
-            // $output = $ai->fetchData($prompt);
-
-            // echo '<pre>';   
-            // print_r( $prompt );
-            // echo '</pre>';
+            
 
         }
 
-        
 
-        // die;
+        die;
 
         
     }

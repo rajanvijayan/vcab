@@ -7,6 +7,7 @@ use EcabVendasta\Includes\Settings\CabSettings;
 use EcabVendasta\Includes\User\MyCab;
 use EcabVendasta\Includes\Trip\PostType;
 use EcabVendasta\Includes\Trip\Cron;
+use EcabVendasta\Includes\Trip\TripListings;
 
 use EcabVendasta\Includes\Trip\Schedule;
 
@@ -22,7 +23,8 @@ class Plugin {
         new MyCab();
         new PostType();
         new Cron();
+        new TripListings();
 
-        new Schedule();
+        //new Schedule(); // It should be run by Cron Job
     }
 }
